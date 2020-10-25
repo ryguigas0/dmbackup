@@ -1,8 +1,14 @@
 import React from 'react';
-import Routes from "./routes"
+import './App.css';
 
-export default function App() {
+function App() {
   return (
-    <Routes></Routes>
+    <div className="App">
+      <header className="App-header">
+        <p>Teste reload muito bem testado</p>
+      </header>
+    </div>
   );
 }
+
+export default App;
