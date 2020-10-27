@@ -1,12 +1,10 @@
 import React from 'react';
-import './App.css';
+import Router from './routing';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <p>Teste reload muito bem testado</p>
-      </header>
+      <Router></Router>
     </div>
   );
 }
