@@ -1,0 +1,21 @@
+.title {
+    font-size: 50;
+}
+
+.link-wrapper {
+    padding: 20px;
+    background-color: #C4C4C4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.link-wrapper + .link-wrapper{
+    margin-top: 20px;
+}
+
+.link {
+    font-size: larger;
+    text-decoration: none;
+    height: 100%;
+}

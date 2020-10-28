@@ -1,0 +1,9 @@
+.character-selection {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+
+.add-icon{
+    margin-top: 5px;
+}
