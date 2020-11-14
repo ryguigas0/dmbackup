@@ -1,0 +1,56 @@
+.page-wrapper {
+    display: grid;
+    grid-template-columns: 20% 1fr 1fr;
+    column-gap: 30px;
+}
+
+.page-wrapper .character-info {
+    grid-column: 1;
+}
+
+.page-wrapper .character-atributes {
+    grid-column: 2;
+}
+
+.page-wrapper .character-inventory {
+    grid-column: 3;
+    max-width: 310px;
+    min-height: 400px;
+}
+
+.page-wrapper .character-inventory .item-list {
+    overflow-y: scroll;
+    max-height: 270px;
+    min-height: 270px;
+}
+
+.page-wrapper .character-info .description-wrapper p.description {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.page-wrapper .character-atributes .atributes-table {
+    border-collapse: collapse;
+}
+
+.page-wrapper .character-atributes .atributes-table th {
+    padding-right: 40px;
+}
+
+.page-wrapper .character-atributes .atributes-table-wrapper {
+    max-height: 400px;
+    overflow-y: scroll;
+}
+
+.page-wrapper .character-atributes .add-atribute form input {
+    width: 80px;
+}
+
+.add-item-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.add-item-form #input-item-name, #input-item-description, button {
+    width: 200px;
+}
