@@ -12,7 +12,7 @@ export default function CreateCharacter() {
 
     function handleCharacterSubmit(e: FormEvent) {
         e.preventDefault()
-        history.push("/edit")
+        history.push("/character")
     }
 
     return (
