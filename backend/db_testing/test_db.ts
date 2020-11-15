@@ -1,6 +1,6 @@
-import { MongoError, MongoClient, Collection } from "mongodb"
+import { MongoClient} from "mongodb"
 
-const mongodb_uri = "mongodb+srv://ryguigas0:5RuSqUj2xAI2Qyhj@rpg-character-manager.j3eup.mongodb.net/sample_analytics?retryWrites=true&w=majority";
+const mongodb_uri = process.env.MONGO_DB_URI as string;
 const client = new MongoClient(mongodb_uri, { useNewUrlParser: true });
 
 /* "sample_analytics"  "accounts"   */
