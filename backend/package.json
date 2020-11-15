@@ -1,0 +1,31 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend aplication for the rpg character manager",
+  "main": "server.js",
+  "scripts": {
+    "dev": "ts-node-dev --rs server.ts --ignore-watch node_modules",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryguigas0/rpg-character-manager.git"
+  },
+  "author": "Guilherme Oliveira Casagrande",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ryguigas0/rpg-character-manager/issues"
+  },
+  "homepage": "https://github.com/ryguigas0/rpg-character-manager#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongodb": "^3.6.3",
+    "typescript": "^4.0.5"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.9",
+    "@types/mongoose": "^5.10.0",
+    "ts-node-dev": "^1.0.0"
+  }
+}
