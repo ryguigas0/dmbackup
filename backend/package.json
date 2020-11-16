@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "ts-node-dev --rs server.ts --ignore-watch node_modules",
+    "test-db": "ts-node db_testing/test_db.ts",
     "start": "ts-node server.ts"
   },
   "repository": {

@@ -1,35 +1,14 @@
-import express, { json } from "express"
-import characterView from "./views/character"
-import characters from "./db_testing/mock_characters"
-import db from './db'
-
+import express, { json, urlencoded } from "express"
+import routes from "./routes"
 
 const app = express()
 app
     .use(json())
-    .get("/all", (req, res) => {
-        db.openConnection(async (err, collection) => {
-            if (err) {
-                console.error(err)
-                return
-            }
-            let data = await collection.find().toArray()
-            res.json(data)
-        })
-    })
-    .get("/add", (req, res) => {
-        db.openConnection(async (err, collection) => {
-            if (err) {
-                console.error(err)
-                return
-            }
-            collection.insertOne(characters[0],
-                (err, result) => res.json(err ?
-                    { error: err } :
-                    characterView(result.insertedId, characters[0])
-                ))
-        })
-    })
+    .use(urlencoded())
+    .get("/characters", routes.getAllCharacters)
+    .get("/character/:id", routes.getCharacter)
+    .delete("/character/:id", routes.deleteCharacter)
+    .post("/character", routes.addCharacter)
     .listen(3333, () => {
         console.log("http://localhost:3333/")
     })

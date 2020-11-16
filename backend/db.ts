@@ -6,12 +6,17 @@ const client = new MongoClient(mongodb_uri, { useNewUrlParser: true });
 
 export default {
     /* "sample_analytics"  "accounts"   */
-    async openConnection(callback: (err: MongoError, collection: Collection) => void) {
+    async openConnection(callback: (collection: Collection) => void) {
         client.connect(async (err) => {
             console.log("CONECTED WITH DB");
             const collection = client.db("character")
                 .collection("info", () => console.log(`Found collection info`));
-            callback(err, collection);
+            if (err) {
+                console.log("ERROR CONNECTING DB TO COLLECTION")
+                console.error(err)
+                return
+            }
+            callback(collection);
         });
     },
     closeConnection() {
