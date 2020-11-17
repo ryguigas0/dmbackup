@@ -1,4 +1,4 @@
-export default interface character {
+export default interface characterInterface {
     name: string,
     description: string,
     atributes: Array<{

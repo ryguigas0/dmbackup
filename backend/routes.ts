@@ -1,36 +1,44 @@
-import db from "./db"
-import characterView from "./views/character"
-import { ObjectId } from "mongodb"
-
 import { Request, Response } from "express"
+
+import CharacterDao from "./schemas/characterSchema"
+import characterView from "./views/characterView"
+import characterInterface from "./interfaces/characterInterface"
 
 export default {
     getAllCharacters(req: Request, res: Response) {
-        db.openConnection(async collection => {
-            res.json(await collection.find().toArray())
+        CharacterDao.find().exec((err, characters) => {
+            if (err) return console.error(err)
+            res.json(characters)
         })
+
     },
     getCharacter(req: Request, res: Response) {
         let { id } = req.params
-        db.openConnection(async collection => {
-            res.json(await collection.findOne({ _id: { $eq: new ObjectId(id) } }))
+        CharacterDao.findById(id).exec((err, character) => {
+            if (err) return console.error(err)
+            res.json(character)
         })
     },
     addCharacter(req: Request, res: Response) {
         let character = req.body
-        db.openConnection(async collection => {
-            collection.insertOne(character,
-                (err, result) => res.json(err ?
-                    { error: err } :
-                    characterView(result.insertedId, character)
-                ))
-        })
+        CharacterDao.create(character)
+            .then(result => res.json(result.id))
+            .catch(err => console.error(err))
     },
     deleteCharacter(req: Request, res: Response) {
         let { id } = req.params
-        db.openConnection(collection => {
-            collection.deleteOne({ _id: { $eq: new ObjectId(id) } },
-                (err, result) => res.json(err ? { error: err } : { result: result.result.ok }))
-        })
+        CharacterDao.deleteOne({ _id: id })
+            .then(result => res.json(result.ok)) /* 1 == ok */
+            .catch(err => console.error(err))
+    },
+    updateCharacter(req: Request, res: Response) {
+        let { id } = req.params
+        let updatedCharacter: characterInterface = req.body
+        CharacterDao.replaceOne({ _id: id }, updatedCharacter)
+            .then(() => res.json({
+                result: 1,
+                id: id
+            }))
+            .catch(err => console.error(err))
     }
 }
