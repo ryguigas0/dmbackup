@@ -10,7 +10,6 @@ export default {
             if (err) return console.error(err)
             res.json(characters)
         })
-
     },
     getCharacter(req: Request, res: Response) {
         let { id } = req.params
@@ -22,7 +21,7 @@ export default {
     addCharacter(req: Request, res: Response) {
         let character = req.body
         CharacterDao.create(character)
-            .then(result => res.json(result.id))
+            .then(result => res.json(characterView(result.id, character)))
             .catch(err => console.error(err))
     },
     deleteCharacter(req: Request, res: Response) {
@@ -34,11 +33,24 @@ export default {
     updateCharacter(req: Request, res: Response) {
         let { id } = req.params
         let updatedCharacter: characterInterface = req.body
-        CharacterDao.replaceOne({ _id: id }, updatedCharacter)
-            .then(() => res.json({
+        CharacterDao.findOneAndUpdate({ _id: id }, updatedCharacter, { new: true })
+            .then(result => res.json({
                 result: 1,
-                id: id
+                id: result?._id
             }))
             .catch(err => console.error(err))
+    },
+    updateCharacterAtributes(req: Request, res: Response) {
+        let { id } = req.params
+        let newAtribute = req.body
+        CharacterDao.findByIdAndUpdate({ _id: id }, { $push: { atributes: newAtribute } }, { new: true }).exec()
+            .then(result => res.json({
+                result: 1,
+                character: result
+            }))
+            .catch(err => {
+                console.error(err)
+                res.json({ result: 0 })
+            })
     }
 }

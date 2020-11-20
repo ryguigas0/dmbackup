@@ -9,7 +9,8 @@ app
     .use(urlencoded({ extended: true }))
     .use((req, res, next) => {
         res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+        res.header("Access-Control-Allow-Headers", "*");
+        res.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PATCH, PUT")
         next();
     })
     .get("/characters", routes.getAllCharacters)
@@ -17,6 +18,7 @@ app
     .get("/character/:id", routes.getCharacter)
     .delete("/character/:id", routes.deleteCharacter)
     .patch("/character/:id", routes.updateCharacter)
+    .put("/character/:id/atributes", routes.updateCharacterAtributes)
     .listen(3333, () => {
         console.log("http://localhost:3333/")
     })
