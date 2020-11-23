@@ -1,4 +1,4 @@
-import express, { json, urlencoded } from "express"
+import express, { json, urlencoded, Request, Response, NextFunction, ErrorRequestHandler } from "express"
 import routes from "./routes"
 import db from "./config/db"
 
@@ -7,18 +7,25 @@ const app = express()
 app
     .use(json())
     .use(urlencoded({ extended: true }))
-    .use((req, res, next) => {
+    .use((req: Request, res: Response, next: NextFunction) => {
         res.header("Access-Control-Allow-Origin", "*");
         res.header("Access-Control-Allow-Headers", "*");
         res.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PATCH, PUT")
         next();
+    })
+    .use((err: ErrorRequestHandler, req: Request, res: Response, next: NextFunction) => {
+        console.error(err)
+        res.status(500).json({
+            result: 0
+        })
     })
     .get("/characters", routes.getAllCharacters)
     .post("/character", routes.addCharacter)
     .get("/character/:id", routes.getCharacter)
     .delete("/character/:id", routes.deleteCharacter)
     .patch("/character/:id", routes.updateCharacter)
-    .put("/character/:id/atributes", routes.updateCharacterAtributes)
+    .put("/character/:id/atributes", routes.addCharacterAtribute)
+    .put("/character/:id/inventory", routes.addCharacterItem)
     .listen(3333, () => {
         console.log("http://localhost:3333/")
     })
