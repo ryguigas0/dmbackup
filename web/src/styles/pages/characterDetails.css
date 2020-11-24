@@ -54,3 +54,13 @@
 .add-item-form #input-item-name, #input-item-description, button {
     width: 200px;
 }
+
+.page-wrapper .back-button-wrapper {
+    border: none;
+    height: min-content;
+    width: min-content;
+}
+
+.page-wrapper .back-button-wrapper:hover {
+    background-color: lightsalmon;
+}

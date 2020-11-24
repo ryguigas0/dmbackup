@@ -13,7 +13,7 @@ export default function Router() {
             <Route path="/" exact component={Landing} />
             <Route path="/create" exact component={CreateCharacter} />
             <Route path="/select" exact component={SelectCharacter} />
-            <Route path="/character" exact component={CharacterDetails} />
+            <Route path="/character/:id" exact component={CharacterDetails} />
         </BrowserRouter>
     )
 }
