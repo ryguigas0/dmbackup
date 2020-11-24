@@ -4,3 +4,20 @@
     padding-left: 15px;
     background-color: gray;
 }
+
+.button-wrapper {
+    background: none;
+    border: none;
+    height: fit-content;
+    width: fit-content;
+    grid-row: 1;
+    grid-template-columns: 2;
+}
+
+.delete-button {
+    background-color: cornsilk;
+}
+
+.delete-button:hover {
+    background-color: lightcoral;
+}

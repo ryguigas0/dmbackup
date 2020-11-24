@@ -13,13 +13,21 @@
     grid-row: 1;
 }
 
-.item .expand-button-wrapper {
+.item .button-wrapper {
     background: none;
     border: none;
     height: fit-content;
     width: fit-content;
     grid-row: 1;
     grid-template-columns: 2;
+}
+
+.delete-button{
+    background-color: cornsilk;
+}
+
+.delete-button:hover{
+    background-color: lightcoral;
 }
 
 .expand-button {
@@ -29,6 +37,7 @@
 .expand-button:hover {
     background-color: green;
 }
+
 
 .hidden {
     visibility: hidden;

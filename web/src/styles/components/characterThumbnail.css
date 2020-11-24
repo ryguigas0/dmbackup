@@ -1,0 +1,23 @@
+.character-thumb {
+    background-color: gainsboro;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.character-thumb:hover {
+    background-color: rgb(201, 198, 198);
+    cursor: pointer;
+}
+
+.delete-icon-wrapper {
+    width: min-content;
+    height: min-content;
+    border: none;
+    top: 36px;
+}
+
+.delete-icon-wrapper:hover {
+    background-color: lightcoral;
+}

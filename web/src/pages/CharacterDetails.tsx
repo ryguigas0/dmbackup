@@ -1,4 +1,6 @@
 import React, { SyntheticEvent, useState } from "react"
+import { useHistory, useParams } from "react-router-dom"
+import { FiArrowLeftCircle } from "react-icons/fi"
 
 import Atribute from "../components/Atribute"
 import Item from "../components/Item"
@@ -6,79 +8,134 @@ import Item from "../components/Item"
 import "../styles/pages/characterDetails.css"
 
 import default_usr from "../images/test_usr_img.jpg"
+import api from "../api/api"
+
+
+interface atributeInterface {
+    _id: string,
+    name: string,
+    value: string,
+    maxvalue?: number
+}
+
+interface itemInterface {
+    _id: string,
+    name: string,
+    description?: string
+}
+
+interface characterInterface {
+    name: string,
+    description: string,
+    inventory: itemInterface[],
+    atributes: atributeInterface[]
+}
 
 export default function CharacterDetails() {
+    const history = useHistory()
+    const { id: characterId } = useParams<{ id: string }>()
 
-    let [atrList, setAtrList] = useState([
-        <Atribute name="Estresse" value="10" maxvalue={200} />,
-        <Atribute name="Força" value="20" />,
-        <Atribute name="Destreza" value="40" />
-    ])
-
+    let [character, setCharacter] = useState<characterInterface>()
     let [newAtrName, setNewAtrName] = useState("")
     let [newAtrValue, setNewAtrValue] = useState("")
     let [newAtrMaxValue, setNewAtrMaxValue] = useState("")
+    let [newItemName, setNewItemName] = useState("")
+    let [newItemDescription, setNewItemDescription] = useState("")
+
+    if (!character) {
+        api.get(`character/${characterId}`)
+            .then(result => setCharacter(result.data as characterInterface))
+            .catch(err => console.error(err))
+    }
 
     function handleNewAtribute(e: SyntheticEvent) {
         e.preventDefault()
 
         const data = {
-            newAtrName,
-            newAtrValue,
-            newAtrMaxValue
+            name: newAtrName,
+            value: newAtrValue,
+            maxvalue: Number(newAtrMaxValue)
         }
 
-        console.log(data)
-
-        /* Post na api com os dados do atributo */
-
-        setAtrList(atrList.concat([<Atribute name={newAtrName} value={newAtrValue} maxvalue={Number(newAtrMaxValue)} />]))
-        setNewAtrName("")
-        setNewAtrValue("")
-        setNewAtrMaxValue("")
+        api.put(`/character/${characterId}/atributes`, data, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': "*/*"
+            }
+        }).then(response => response.data?.result === 1 ?
+            setCharacter(response.data?.character) : alert("Não foi possível adicionar o novo atributo"))
+            .catch(err => {
+                console.error(err)
+                alert("Não foi possível adicionar o novo atributo")
+            })
     }
 
-    let [itemList, setItemList] = useState([
-        <Item name="Espadona" description="Super espadona mesmo, de verdade, não tô zuando" />,
-        <Item name="Mega poção" description="Super opção verdadeira, mesmo, sem zueira" />,
-        <Item name="papel" />
-    ])
-
-    let [newItemName, setNewItemName] = useState("")
-    let [newItemDescription, setNewItemDescription] = useState("")
 
     function handleNewItem(e: SyntheticEvent) {
         e.preventDefault()
 
         const data = {
-            newItemName,
-            newItemDescription,
+            name: newItemName,
+            description: newItemDescription,
         }
 
-        console.log(data)
+        api.put(`character/${characterId}/inventory`, data)
+            .then(response => {
+                if (response.data?.result === 1) {
+                    setCharacter(response.data?.character)
+                } else {
+                    alert("Não foi possível adicionar o item")
+                }
+            })
 
-        /* Post na api com os dados do atributo */
-
-        setItemList(itemList.concat([
-            <Item name={newItemName} description={newItemDescription !== "" ? newItemDescription : undefined} />
-        ]))
 
         setNewItemName("")
         setNewItemDescription("")
     }
 
+    function handleDeleteItem(itemId: string) {
+        api.delete(`character/${characterId}/inventory/${itemId}`)
+            .then(result => {
+                if (result.data?.result === 1) {
+                    setCharacter(result.data?.character as characterInterface)
+                    alert("Item deletado")
+                } else {
+                    alert("Não foi possível deleter item")
+                }
+            })
+    }
+
+    function handleDeleteAtribute(atrId: string) {
+        api.delete(`character/${characterId}/atributes/${atrId}`)
+            .then(result => {
+                if (result.data?.result === 1) {
+                    setCharacter(result.data?.character as characterInterface)
+                    alert("Atributo deletado")
+                } else {
+                    alert("Não foi possível deletar atributo")
+                }
+            })
+    }
+
+    function handleBackSelection() {
+        history.goBack()
+    }
+
     return (
-        < div className="page-wrapper" >
+        < div className="page-wrapper">
+            <button className="back-button-wrapper" onClick={handleBackSelection}>
+                <FiArrowLeftCircle size={40} /> Selecionar outro personagem
+            </button>
             <div className="character-info">
                 <div className="character-image">
                     <img src={default_usr} alt="usr_default" className="character-img" />
                 </div>
                 <div className="name-wrapper">
-                    Nome:<p className="name">Jubileu</p>
+                    Nome:<p className="name">{character?.name}</p>
                 </div>
                 <div className="description-wrapper">
                     Descrição: <p className="description">
-                        BLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa
+                        {character?.description}
                     </p>
                 </div>
             </div>
@@ -86,12 +143,22 @@ export default function CharacterDetails() {
                 <h1>Atributos</h1>
                 <div className="atributes-table-wrapper">
                     <table className="atributes-table">
-                        <tr>
-                            <th>Nome</th>
-                            <th>Valor</th>
-                            <th>Valor máximo</th>
-                        </tr>
-                        {atrList}
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Valor</th>
+                                <th>Valor máximo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {character?.atributes.map(
+                                atr => <Atribute
+                                    key={atr._id} id={atr._id}
+                                    name={atr.name} value={atr.value}
+                                    maxvalue={atr.maxvalue}
+                                    deleteCallback={handleDeleteAtribute} />
+                            )}
+                        </tbody>
                     </table>
                 </div>
                 <div className="add-atribute">
@@ -105,14 +172,17 @@ export default function CharacterDetails() {
                         <input type="number" placeholder="valor max" id="input-atribute-maxvalue"
                             onChange={e => setNewAtrMaxValue(e.target.value)} value={newAtrMaxValue} />
 
-                        <button type="submit" onClick={e => { handleNewAtribute(e) }}>Adicionar</button>
+                        <button type="submit" onClick={e => handleNewAtribute(e)}>Adicionar</button>
                     </form>
                 </div>
             </div>
             <div className="character-inventory">
                 <h1>Inventário</h1>
                 <div className="item-list">
-                    {itemList}
+                    {character?.inventory.map(
+                        item => <Item key={item._id} id={item._id} name={item.name}
+                            description={item.description} deleteCallback={handleDeleteItem} />
+                    )}
                 </div>
                 <div className="add-item-wrapper">
                     <form className="add-item-form" action="">
