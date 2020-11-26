@@ -1,7 +1,7 @@
 import axios from "axios"
 
 let api = axios.create({
-    baseURL: `http://localhost:3333`,
+    baseURL: `https://dmbackup-backend.glitch.me/`,
 })
 
 export default api
