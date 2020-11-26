@@ -1,8 +1,7 @@
 import axios from "axios"
-import process from "process"
 
 let api = axios.create({
-    baseURL: `${process.env.REACT_APP_BACKEND_URL}`,
+    baseURL: `http://localhost:3333`,
 })
 
 export default api
