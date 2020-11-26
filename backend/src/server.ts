@@ -17,12 +17,6 @@ app
         origin: "http://localhost:3333",
         optionsSuccessStatus: 200
     }))
-    .use((req: Request, res: Response, next: NextFunction) => {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "*");
-        res.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PATCH, PUT")
-        next();
-    })
     .use(morgan("tiny"))
     .use((err: ErrorRequestHandler, req: Request, res: Response, next: NextFunction) => {
         console.error(err)
@@ -37,7 +31,7 @@ app
     .delete("/character/:id", routes.deleteCharacter)
     .delete("/character/:id/inventory/:itemId", routes.deleteCharacterItem)
     .delete("/character/:id/atributes/:atrId", routes.deleteCharacterAtribute)
-    .patch("/character/:id", routes.updateCharacter)
+    .patch("/character/:id", multer(multerConfig as multer.Options).single("avatar"), routes.updateCharacter)
     .put("/character/:id/atributes", routes.addCharacterAtribute)
     .put("/character/:id/inventory", routes.addCharacterItem)
     .listen(`${process.env.PORT}`, () => {

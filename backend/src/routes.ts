@@ -26,13 +26,17 @@ export default {
     },
     deleteCharacter(req: Request, res: Response) {
         let { id } = req.params
-        CharacterDao.findOne({ _id: id }, "avatar_url").then(result => deleteUploadHelper(result?.avatar_url as string))
+        deleteUploadHelper(id)
         CharacterDao.deleteOne({ _id: id })
             .then(result => res.json({ result: result.ok })) /* 1 == ok */
     },
     updateCharacter(req: Request, res: Response) {
         let { id } = req.params
         let updatedCharacter: characterInterface = req.body
+
+        deleteUploadHelper(id)
+        updatedCharacter["avatar_url"] = req.file.filename
+
         CharacterDao.findOneAndUpdate({ _id: id }, updatedCharacter, { new: true })
             .then(result => res.json({
                 result: 1,
