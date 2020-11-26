@@ -3,13 +3,13 @@ import { useHistory } from "react-router-dom"
 import { FiUserPlus } from "react-icons/fi"
 
 import "../styles/pages/selectCharacter.css"
-/* import test_usr_img from "../images/test_usr_img.jpg" */
 import api from "../api/api"
 import CharacterThumbnail from "../components/CharacterThumbnail"
 
 interface characterInterface {
     _id: string,
-    name: string
+    name: string,
+    avatar_url: string
 }
 
 export default function SelectCharacter() {
@@ -46,9 +46,10 @@ export default function SelectCharacter() {
     return (
         <div className="character-selection">
             {
-                characterList.map(character =>
+                characterList.map((character, index) =>
                     <CharacterThumbnail
-                        key={character._id} name={character.name}
+                        key={index} name={character.name}
+                        avatar_url={`${api.defaults.baseURL}/images/${character.avatar_url}`}
                         id={character._id} onclickCallback={handleCharacterDetailsRedirect}
                         deleteButtonCallback={handleCharacterDelete}
                     />

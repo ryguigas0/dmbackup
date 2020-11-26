@@ -13,10 +13,7 @@ const app = express()
 app
     .use(json())
     .use(urlencoded({ extended: true }))
-    .use(cors({
-        origin: "http://localhost:3333",
-        optionsSuccessStatus: 200
-    }))
+    .use(cors())
     .use(morgan("tiny"))
     .use((err: ErrorRequestHandler, req: Request, res: Response, next: NextFunction) => {
         console.error(err)

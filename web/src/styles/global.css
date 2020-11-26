@@ -4,3 +4,8 @@ body{
     align-items: center;
     justify-content: center;
 }
+
+img.character-img{
+    max-width: 200px;
+    resize: both;
+}

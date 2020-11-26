@@ -7,7 +7,6 @@ import Item from "../components/Item"
 
 import "../styles/pages/characterDetails.css"
 
-import default_usr from "../images/test_usr_img.jpg"
 import api from "../api/api"
 
 
@@ -28,7 +27,8 @@ interface characterInterface {
     name: string,
     description: string,
     inventory: itemInterface[],
-    atributes: atributeInterface[]
+    atributes: atributeInterface[],
+    avatar_url: string
 }
 
 export default function CharacterDetails() {
@@ -118,7 +118,7 @@ export default function CharacterDetails() {
     }
 
     function handleBackSelection() {
-        history.goBack()
+        history.push("/select")
     }
 
     return (
@@ -128,7 +128,7 @@ export default function CharacterDetails() {
             </button>
             <div className="character-info">
                 <div className="character-image">
-                    <img src={default_usr} alt="usr_default" className="character-img" />
+                    <img src={`${api.defaults.baseURL}/images/${character?.avatar_url}`} alt="character-img" className="character-img" />
                 </div>
                 <div className="name-wrapper">
                     Nome:<p className="name">{character?.name}</p>

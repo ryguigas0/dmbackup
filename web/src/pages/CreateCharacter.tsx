@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react"
+import React, { ChangeEvent, FormEvent, useState } from "react"
 import { useHistory } from "react-router-dom"
 
 import "../styles/pages/createCharacter.css"
@@ -12,14 +12,19 @@ export default function CreateCharacter() {
 
     const [newCharacterName, setNewCharacterName] = useState<string>("")
     const [newCharacterDescription, setNewCharacterDescription] = useState<string>("")
+    const [newCharacterAvatar, setNewCharacterAvatar] = useState<File>()
 
     function handleCharacterSubmit(e: FormEvent) {
         e.preventDefault()
-        let data = {
-            name: newCharacterName,
-            description: newCharacterDescription
-        }
-        api.post("/character", data)
+        let data = new FormData()
+        data.append("name", newCharacterName)
+        data.append("description", newCharacterDescription)
+        data.append("avatar", newCharacterAvatar ? newCharacterAvatar : "none")
+        api.post("/character", data, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
             .then(response => {
                 let { result, id } = response.data
                 if (result === 1) {
@@ -30,18 +35,26 @@ export default function CreateCharacter() {
             })
     }
 
+    function handleNewCharacterAvatar(e: ChangeEvent<HTMLInputElement>) {
+        if (!e.target.files) return
+
+        let selectedImage = Array.from(e.target.files)[0]
+        setNewCharacterAvatar(selectedImage)
+    }
+
 
     return (
         <div className="createCharacter">
             <form className="create-character-form" action="">
                 <fieldset className="character-image">
                     <div className="character-image-preview">
-                        <img src={default_usr} alt="usr_default" className="character-img" />
-                        <label htmlFor="character-img-input" className="edit-icon">
+                        <img src={newCharacterAvatar ? URL.createObjectURL(newCharacterAvatar) : default_usr} alt="usr_default" className="character-img" />
+                        <label htmlFor="avatar" className="edit-icon">
                             <img src={edit_icon} alt="" />
                         </label>
                     </div>
-                    <input type="file" className="character-img-input" id="character-img-input" />
+                    <input type="file" className="character-img-input"
+                        id="avatar" onChange={e => handleNewCharacterAvatar(e)} />
                 </fieldset>
                 <fieldset className="character-info">
                     <div className="character-name">

@@ -1,16 +1,17 @@
 import React from "react"
-import { FiTrash, FiUser } from "react-icons/fi"
+import { FiTrash } from "react-icons/fi"
 
 import "../styles/components/characterThumbnail.css"
 
 interface props {
     id: string
     name: string,
+    avatar_url: string,
     onclickCallback: (id: string) => void,
     deleteButtonCallback: (id: string) => void
 }
 
-export default function CharacterThumbnail({ id, name, onclickCallback, deleteButtonCallback }: props) {
+export default function CharacterThumbnail({ id, name, onclickCallback, deleteButtonCallback, avatar_url }: props) {
     return (
         <div className="character-thumb-wrapper">
             <button className="delete-icon-wrapper" onClick={() => deleteButtonCallback(id)}>
@@ -20,7 +21,7 @@ export default function CharacterThumbnail({ id, name, onclickCallback, deleteBu
                 onclickCallback(id)
             }}>
                 <div className="image-wrapper">
-                    <FiUser size={100} className="image" />
+                    <img src={avatar_url} alt={name} className="character-img"/>
                 </div>
                 <p>{name}</p>
             </div>
