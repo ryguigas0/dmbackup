@@ -3,6 +3,8 @@ import { Request, Response } from "express"
 import CharacterDao from "./schemas/characterSchema"
 import characterInterface from "./interfaces/characterInterface"
 
+import deleteUploadHelper from "./helpers/deleteUpload"
+
 export default {
     getAllCharacters(req: Request, res: Response) {
         CharacterDao.find().exec().then(characters => res.json(characters))
@@ -15,6 +17,7 @@ export default {
     },
     addCharacter(req: Request, res: Response) {
         let character = req.body
+        character["avatar_url"] = req.file.filename
         CharacterDao.create(character)
             .then(result => res.json({
                 result: 1,
@@ -23,6 +26,7 @@ export default {
     },
     deleteCharacter(req: Request, res: Response) {
         let { id } = req.params
+        CharacterDao.findOne({ _id: id }, "avatar_url").then(result => deleteUploadHelper(result?.avatar_url as string))
         CharacterDao.deleteOne({ _id: id })
             .then(result => res.json({ result: result.ok })) /* 1 == ok */
     },

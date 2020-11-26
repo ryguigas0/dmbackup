@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import characterInterface from "../interfaces/characterInterface"
 
 let characterSchema = new mongoose.Schema(
     {
@@ -27,8 +28,11 @@ let characterSchema = new mongoose.Schema(
                 required: true
             },
             description: String
-        }]
+        }],
+        avatar_url: {
+            type: String,
+        }
     }
 )
-let CharacterDao = mongoose.model("Character", characterSchema, "info")
+let CharacterDao = mongoose.model<characterInterface>("Character", characterSchema, "info")
 export default CharacterDao
