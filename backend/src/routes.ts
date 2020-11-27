@@ -30,7 +30,7 @@ export default {
         CharacterDao.deleteOne({ _id: id })
             .then(result => res.json({ result: result.ok })) /* 1 == ok */
     },
-    updateCharacter(req: Request, res: Response) {
+    updateCharacterInfo(req: Request, res: Response) {
         let { id } = req.params
         let updatedCharacter: characterInterface = req.body
 
@@ -46,19 +46,32 @@ export default {
     addCharacterAtribute(req: Request, res: Response) {
         let { id } = req.params
         let newAtribute = req.body
-        CharacterDao.findByIdAndUpdate({ _id: id }, { $push: { atributes: newAtribute } }, { new: true }).exec()
+        CharacterDao.findByIdAndUpdate(id, { $push: { atributes: newAtribute } }, { new: true }).exec()
             .then(result => res.json({
                 result: 1,
                 character: result
             }))
     },
     deleteCharacterAtribute(req: Request, res: Response) {
-        let { id, atrId } = req.params
-        CharacterDao.findByIdAndUpdate(id, { $pull: { atributes: { _id: atrId } } }, { new: true }).exec()
+        let { characterId, atrId } = req.params
+        CharacterDao.findByIdAndUpdate(characterId, { $pull: { atributes: { _id: atrId } } }, { new: true }).exec()
             .then(result => res.json({
                 result: 1,
                 character: result
             }))
+    },
+    updateChracterAtribute(req: Request, res: Response) {
+        let { characterId, atrId } = req.params
+        let { name, value, maxvalue } = req.body
+        CharacterDao.updateOne({ _id: characterId, 'atributes._id': atrId }, {
+            $set: {
+                'atributes.$.name': name ? name : "",
+                'atributes.$.value': value ? value : "",
+                'atributes.$.maxvalue': maxvalue ? maxvalue : undefined
+            }
+        }).then(result => res.json({
+            result: result.ok
+        }))
     },
     addCharacterItem(req: Request, res: Response) {
         let { id } = req.params
@@ -70,11 +83,23 @@ export default {
             }))
     },
     deleteCharacterItem(req: Request, res: Response) {
-        let { id, itemId } = req.params
-        CharacterDao.findByIdAndUpdate(id, { $pull: { inventory: { _id: itemId } } }, { new: true }).exec()
+        let { characterId, itemId } = req.params
+        CharacterDao.findByIdAndUpdate(characterId, { $pull: { inventory: { _id: itemId } } }, { new: true }).exec()
             .then(result => res.json({
                 result: 1,
                 character: result
             }))
-    }
+    },
+    updateChracterItem(req: Request, res: Response) {
+        let { characterId, itemId } = req.params
+        let { name, description } = req.body
+        CharacterDao.updateOne({ _id: characterId, 'inventory._id': itemId }, {
+            $set: {
+                'inventory.$.name': name ? name : "",
+                'inventory.$.description': description ? description : ""
+            }
+        }).then(result => res.json({
+            result: result.ok
+        }))
+    },
 }

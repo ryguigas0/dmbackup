@@ -11,26 +11,37 @@ import db from "./config/db"
 db()
 const app = express()
 app
+    /* Middlewares */
     .use(json())
     .use(urlencoded({ extended: true }))
     .use(cors())
     .use(morgan("tiny"))
+    /* Error handler */
     .use((err: ErrorRequestHandler, req: Request, res: Response, next: NextFunction) => {
         console.error(err)
         res.status(500).json({
             result: 0
         })
     })
+
+    /* Access to character images */
     .use("/images", express.static(path.join(__dirname, "..", "uploads")))
+    /* Access data */
     .get("/characters", routes.getAllCharacters)
     .get("/character/:id", routes.getCharacter)
+    /* Add data */
     .post("/character", multer(multerConfig as multer.Options).single("avatar"), routes.addCharacter)
+    .post("/character/:id/atributes", routes.addCharacterAtribute)
+    .post("/character/:id/inventory", routes.addCharacterItem)
+    /* Delete data */
     .delete("/character/:id", routes.deleteCharacter)
-    .delete("/character/:id/inventory/:itemId", routes.deleteCharacterItem)
-    .delete("/character/:id/atributes/:atrId", routes.deleteCharacterAtribute)
-    .patch("/character/:id", multer(multerConfig as multer.Options).single("avatar"), routes.updateCharacter)
-    .put("/character/:id/atributes", routes.addCharacterAtribute)
-    .put("/character/:id/inventory", routes.addCharacterItem)
+    .delete("/character/:characterId/inventory/:itemId", routes.deleteCharacterItem)
+    .delete("/character/:characterId/atributes/:atrId", routes.deleteCharacterAtribute)
+    /* Update data */
+    .patch("/character/:id", multer(multerConfig as multer.Options).single("avatar"), routes.updateCharacterInfo)
+    .patch("/character/:characterId/inventory/:itemId", routes.updateChracterItem)
+    .patch("/character/:characterId/atributes/:atrId", routes.updateChracterAtribute)
+
     .listen(`${process.env.PORT}`, () => {
         console.log("Rodando no port: " + `${process.env.PORT}`)
     })
