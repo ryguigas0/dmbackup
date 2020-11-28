@@ -60,17 +60,19 @@ export default {
                 character: result
             }))
     },
-    updateChracterAtribute(req: Request, res: Response) {
+    async updateChracterAtribute(req: Request, res: Response) {
         let { characterId, atrId } = req.params
         let { name, value, maxvalue } = req.body
-        CharacterDao.updateOne({ _id: characterId, 'atributes._id': atrId }, {
+        await CharacterDao.updateOne({ _id: characterId, 'atributes._id': atrId }, {
             $set: {
                 'atributes.$.name': name ? name : "",
                 'atributes.$.value': value ? value : "",
                 'atributes.$.maxvalue': maxvalue ? maxvalue : undefined
             }
-        }).then(result => res.json({
-            result: result.ok
+        })
+        CharacterDao.findById(characterId).then(result => res.json({
+            result: 1,
+            character: result
         }))
     },
     addCharacterItem(req: Request, res: Response) {
@@ -90,16 +92,18 @@ export default {
                 character: result
             }))
     },
-    updateChracterItem(req: Request, res: Response) {
+    async updateChracterItem(req: Request, res: Response) {
         let { characterId, itemId } = req.params
         let { name, description } = req.body
-        CharacterDao.updateOne({ _id: characterId, 'inventory._id': itemId }, {
+        await CharacterDao.updateOne({ _id: characterId, 'inventory._id': itemId }, {
             $set: {
                 'inventory.$.name': name ? name : "",
                 'inventory.$.description': description ? description : ""
             }
-        }).then(result => res.json({
-            result: result.ok
+        })
+        CharacterDao.findById(characterId).then(result => res.json({
+            result: 1,
+            character: result
         }))
     },
 }
