@@ -39,6 +39,8 @@ export default function CharacterDetails() {
     let [newAtrName, setNewAtrName] = useState("")
     let [newAtrValue, setNewAtrValue] = useState("")
     let [newAtrMaxValue, setNewAtrMaxValue] = useState("")
+    let [editAtrId, setEditAtrId] = useState<string | undefined>(undefined)
+    let [editItemId, setEditItemId] = useState<string | undefined>(undefined)
     let [newItemName, setNewItemName] = useState("")
     let [newItemDescription, setNewItemDescription] = useState("")
 
@@ -51,25 +53,68 @@ export default function CharacterDetails() {
     function handleNewAtribute(e: SyntheticEvent) {
         e.preventDefault()
 
-        const data = {
+        let data = {
             name: newAtrName,
             value: newAtrValue,
-            maxvalue: Number(newAtrMaxValue)
+            maxvalue: Number(newAtrMaxValue),
         }
 
-        api.put(`/character/${characterId}/atributes`, data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': "*/*"
-            }
-        }).then(response => response.data?.result === 1 ?
-            setCharacter(response.data?.character) : alert("Não foi possível adicionar o novo atributo"))
-            .catch(err => {
-                console.error(err)
-                alert("Não foi possível adicionar o novo atributo")
+        if (editAtrId) {
+            api.patch(`/character/${characterId}/atributes/${editAtrId}`, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': "*/*"
+                }
+            }).then(response => response.data?.result === 1 ?
+                setCharacter(response.data?.character) : alert("Não foi possível editar o atributo"))
+                .catch(err => {
+                    console.error(err)
+                    alert("Não foi possível editar o atributo")
+                })
+            setEditAtrId(undefined)
+        } else {
+            api.post(`/character/${characterId}/atributes`, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': "*/*"
+                }
+            }).then(response => response.data?.result === 1 ?
+                setCharacter(response.data?.character) : alert("Não foi possível adicionar o novo atributo"))
+                .catch(err => {
+                    console.error(err)
+                    alert("Não foi possível adicionar o novo atributo")
+                })
+        }
+        setNewAtrName("")
+        setNewAtrValue("")
+        setNewAtrMaxValue("")
+    }
+
+    function handleDeleteAtribute(atrId: string) {
+        api.delete(`character/${characterId}/atributes/${atrId}`)
+            .then(result => {
+                if (result.data?.result === 1) {
+                    setCharacter(result.data?.character as characterInterface)
+                    alert("Atributo deletado")
+                } else {
+                    alert("Não foi possível deletar atributo")
+                }
             })
     }
 
+    function handleEditAtribute(id: string, name: string, value: string, maxvalue: number | undefined) {
+        setNewAtrName(name)
+        setNewAtrValue(value)
+        setNewAtrMaxValue(maxvalue ? maxvalue.toString() : "")
+        setEditAtrId(id)
+    }
+
+    function handleCancelEditingAtribute() {
+        setNewAtrName("")
+        setNewAtrValue("")
+        setNewAtrMaxValue("")
+        setEditAtrId(undefined)
+    }
 
     function handleNewItem(e: SyntheticEvent) {
         e.preventDefault()
@@ -79,15 +124,32 @@ export default function CharacterDetails() {
             description: newItemDescription,
         }
 
-        api.put(`character/${characterId}/inventory`, data)
-            .then(response => {
-                if (response.data?.result === 1) {
-                    setCharacter(response.data?.character)
-                } else {
-                    alert("Não foi possível adicionar o item")
+        if (editItemId) {
+            api.patch(`/character/${characterId}/inventory/${editItemId}`, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': "*/*"
                 }
-            })
-
+            }).then(response => response.data?.result === 1 ?
+                setCharacter(response.data?.character) : alert("Não foi possível editar o item"))
+                .catch(err => {
+                    console.error(err)
+                    alert("Não foi possível editar o item")
+                })
+            setEditItemId(undefined)
+        } else {
+            api.post(`/character/${characterId}/inventory`, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': "*/*"
+                }
+            }).then(response => response.data?.result === 1 ?
+                setCharacter(response.data?.character) : alert("Não foi possível adicionar o novo item"))
+                .catch(err => {
+                    console.error(err)
+                    alert("Não foi possível adicionar o novo item")
+                })
+        }
 
         setNewItemName("")
         setNewItemDescription("")
@@ -105,16 +167,16 @@ export default function CharacterDetails() {
             })
     }
 
-    function handleDeleteAtribute(atrId: string) {
-        api.delete(`character/${characterId}/atributes/${atrId}`)
-            .then(result => {
-                if (result.data?.result === 1) {
-                    setCharacter(result.data?.character as characterInterface)
-                    alert("Atributo deletado")
-                } else {
-                    alert("Não foi possível deletar atributo")
-                }
-            })
+    function handleEditItem(id: string, name: string, description: string | undefined) {
+        setNewItemName(name)
+        setNewItemDescription(description ? description.toString() : "")
+        setEditItemId(id)
+    }
+
+    function handleCancelEditingItem() {
+        setNewItemName("")
+        setNewItemDescription("")
+        setEditItemId(undefined)
     }
 
     function handleBackSelection() {
@@ -152,11 +214,14 @@ export default function CharacterDetails() {
                         </thead>
                         <tbody>
                             {character?.atributes.map(
-                                atr => <Atribute
-                                    key={atr._id} id={atr._id}
+                                (atr, index) => <Atribute
+                                    key={index} id={atr._id}
                                     name={atr.name} value={atr.value}
                                     maxvalue={atr.maxvalue}
-                                    deleteCallback={handleDeleteAtribute} />
+                                    deleteCallback={handleDeleteAtribute}
+                                    editCallback={handleEditAtribute}
+                                    cancelEditingCallback={handleCancelEditingAtribute}
+                                />
                             )}
                         </tbody>
                     </table>
@@ -165,13 +230,10 @@ export default function CharacterDetails() {
                     <form action="">
                         <input type="text" placeholder="nome" id="input-atribute-name"
                             onChange={e => setNewAtrName(e.target.value)} value={newAtrName} />
-
                         <input type="text" placeholder="valor" id="input-atribute-value"
                             onChange={e => setNewAtrValue(e.target.value)} value={newAtrValue} />
-
                         <input type="number" placeholder="valor max" id="input-atribute-maxvalue"
                             onChange={e => setNewAtrMaxValue(e.target.value)} value={newAtrMaxValue} />
-
                         <button type="submit" onClick={e => handleNewAtribute(e)}>Adicionar</button>
                     </form>
                 </div>
@@ -180,8 +242,15 @@ export default function CharacterDetails() {
                 <h1>Inventário</h1>
                 <div className="item-list">
                     {character?.inventory.map(
-                        item => <Item key={item._id} id={item._id} name={item.name}
-                            description={item.description} deleteCallback={handleDeleteItem} />
+                        (item, index) => <Item
+                            key={index}
+                            id={item._id}
+                            name={item.name}
+                            description={item.description}
+                            deleteCallback={handleDeleteItem}
+                            editCallback={handleEditItem}
+                            cancelEditingCallback={handleCancelEditingItem}
+                        />
                     )}
                 </div>
                 <div className="add-item-wrapper">

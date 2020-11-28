@@ -6,6 +6,6 @@ body{
 }
 
 img.character-img{
-    max-width: 200px;
-    resize: both;
+    max-width: 150px;
+    max-height: 150px;
 }
