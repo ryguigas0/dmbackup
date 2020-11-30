@@ -11,11 +11,16 @@ interface AtributeProps {
     maxvalue?: number,
     deleteCallback: (id: string) => void,
     editCallback: (id: string, name: string, value: string, maxvalue: number | undefined) => void,
-    cancelEditingCallback: () => void
+    cancelEditingCallback: () => boolean
 }
 
 export default function Atribute({ id, name, value, maxvalue, deleteCallback, editCallback, cancelEditingCallback }: AtributeProps) {
     const [editing, setEditing] = useState(false)
+
+    function editingButtonChange() {
+        editing ? setEditing(false) : setEditing(true)
+    }
+
     return (
         <tr className="atribute">
             <td className="name">{name}</td>
@@ -26,15 +31,14 @@ export default function Atribute({ id, name, value, maxvalue, deleteCallback, ed
                     <FiTrash size={22} className="delete-button" />
                 </button>
                 <button onClick={() => {
+                    editingButtonChange()
                     if (!editing) {
-                        setEditing(true)
                         editCallback(id, name, value, maxvalue)
                     } else {
-                        setEditing(false)
-                        cancelEditingCallback()
+                        setEditing(cancelEditingCallback())
                     }
                 }} className="button-wrapper">
-                    {editing ? <FiX /> : <img src={edit_icon} alt="edit" />}
+                    {editing ? (<FiX />) : (<img src={edit_icon} alt="edit" />)}
                 </button>
             </td>
         </tr>

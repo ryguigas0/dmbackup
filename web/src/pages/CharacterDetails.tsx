@@ -6,6 +6,7 @@ import Atribute from "../components/Atribute"
 import Item from "../components/Item"
 
 import "../styles/pages/characterDetails.css"
+import edit_icon from "../images/edit_icon.jpg"
 
 import api from "../api/api"
 
@@ -28,7 +29,7 @@ interface characterInterface {
     description: string,
     inventory: itemInterface[],
     atributes: atributeInterface[],
-    avatar_url: string
+    avatar: string
 }
 
 export default function CharacterDetails() {
@@ -39,15 +40,18 @@ export default function CharacterDetails() {
     let [newAtrName, setNewAtrName] = useState("")
     let [newAtrValue, setNewAtrValue] = useState("")
     let [newAtrMaxValue, setNewAtrMaxValue] = useState("")
-    let [editAtrId, setEditAtrId] = useState<string | undefined>(undefined)
-    let [editItemId, setEditItemId] = useState<string | undefined>(undefined)
     let [newItemName, setNewItemName] = useState("")
     let [newItemDescription, setNewItemDescription] = useState("")
+    let [editAtrId, setEditAtrId] = useState<string | undefined>(undefined)
+    let [editItemId, setEditItemId] = useState<string | undefined>(undefined)
 
     if (!character) {
         api.get(`character/${characterId}`)
             .then(result => setCharacter(result.data as characterInterface))
-            .catch(err => console.error(err))
+            .catch(err => {
+                console.error(err)
+                history.push("/select")
+            })
     }
 
     function handleNewAtribute(e: SyntheticEvent) {
@@ -71,7 +75,6 @@ export default function CharacterDetails() {
                     console.error(err)
                     alert("Não foi possível editar o atributo")
                 })
-            setEditAtrId(undefined)
         } else {
             api.post(`/character/${characterId}/atributes`, data, {
                 headers: {
@@ -88,6 +91,7 @@ export default function CharacterDetails() {
         setNewAtrName("")
         setNewAtrValue("")
         setNewAtrMaxValue("")
+        setEditAtrId(undefined)
     }
 
     function handleDeleteAtribute(atrId: string) {
@@ -114,6 +118,7 @@ export default function CharacterDetails() {
         setNewAtrValue("")
         setNewAtrMaxValue("")
         setEditAtrId(undefined)
+        return false
     }
 
     function handleNewItem(e: SyntheticEvent) {
@@ -153,6 +158,7 @@ export default function CharacterDetails() {
 
         setNewItemName("")
         setNewItemDescription("")
+        setEditItemId(undefined)
     }
 
     function handleDeleteItem(itemId: string) {
@@ -183,14 +189,22 @@ export default function CharacterDetails() {
         history.push("/select")
     }
 
+    function handleEditCharacterInfo() {
+        let description = character?.description.toString().replaceAll(" ", "+")
+        history.push(`/create?id=${characterId}&name=${character?.name}&description=${description}&avatar=${character?.avatar}`)
+    }
+
     return (
         < div className="page-wrapper">
             <button className="back-button-wrapper" onClick={handleBackSelection}>
                 <FiArrowLeftCircle size={40} /> Selecionar outro personagem
             </button>
             <div className="character-info">
+                <button className="button-wrapper" onClick={handleEditCharacterInfo}>
+                    <img src={edit_icon} alt="Edit character" />
+                </button>
                 <div className="character-image">
-                    <img src={`${api.defaults.baseURL}/images/${character?.avatar_url}`} alt="character-img" className="character-img" />
+                    <img src={`${api.defaults.baseURL}/images/${character?.avatar}`} alt="character-img" className="character-img" />
                 </div>
                 <div className="name-wrapper">
                     Nome:<p className="name">{character?.name}</p>

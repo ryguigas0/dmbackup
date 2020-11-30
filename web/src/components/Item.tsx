@@ -22,6 +22,10 @@ export default function Item({ id, name, description, deleteCallback, editCallba
         expanded ? setExpanded(false) : setExpanded(true)
     }
 
+    function editingButtonChange() {
+        editing ? setEditing(false) : setEditing(true)
+    }
+
     return (
         <div className="item">
             <div className="item-name">
@@ -36,11 +40,10 @@ export default function Item({ id, name, description, deleteCallback, editCallba
                     <FiTrash size={22} className="delete-button" />
                 </button>
                 <button onClick={() => {
+                    editingButtonChange()
                     if (!editing) {
                         editCallback(id, name, description)
-                        setEditing(true)
                     } else {
-                        setEditing(false)
                         cancelEditingCallback()
                     }
                 }} className="button-wrapper">

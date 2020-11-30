@@ -14,5 +14,5 @@ export default interface characterInterface extends mongoose.Document {
         name: string,
         description?: string
     }>,
-    avatar_url: string
+    avatar: string
 }

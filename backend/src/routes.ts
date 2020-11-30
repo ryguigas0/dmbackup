@@ -17,7 +17,7 @@ export default {
     },
     addCharacter(req: Request, res: Response) {
         let character = req.body
-        character["avatar_url"] = req.file.filename
+        character["avatar"] = req.file.filename
         CharacterDao.create(character)
             .then(result => res.json({
                 result: 1,
@@ -34,8 +34,10 @@ export default {
         let { id } = req.params
         let updatedCharacter: characterInterface = req.body
 
-        deleteUploadHelper(id)
-        updatedCharacter["avatar_url"] = req.file.filename
+        if (!updatedCharacter.avatar) {
+            deleteUploadHelper(id)
+            updatedCharacter.avatar = req.file.filename
+        }
 
         CharacterDao.findOneAndUpdate({ _id: id }, updatedCharacter, { new: true })
             .then(result => res.json({
