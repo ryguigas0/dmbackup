@@ -6,6 +6,7 @@ import Atribute from "../components/Atribute"
 import Item from "../components/Item"
 
 import "../styles/pages/characterDetails.css"
+import edit_icon from "../images/edit_icon.jpg"
 
 import api from "../api/api"
 
@@ -28,7 +29,7 @@ interface characterInterface {
     description: string,
     inventory: itemInterface[],
     atributes: atributeInterface[],
-    avatar_url: string
+    avatar: string
 }
 
 export default function CharacterDetails() {
@@ -41,68 +42,56 @@ export default function CharacterDetails() {
     let [newAtrMaxValue, setNewAtrMaxValue] = useState("")
     let [newItemName, setNewItemName] = useState("")
     let [newItemDescription, setNewItemDescription] = useState("")
+    let [editAtrId, setEditAtrId] = useState<string | undefined>(undefined)
+    let [editItemId, setEditItemId] = useState<string | undefined>(undefined)
 
     if (!character) {
         api.get(`character/${characterId}`)
             .then(result => setCharacter(result.data as characterInterface))
-            .catch(err => console.error(err))
+            .catch(err => {
+                console.error(err)
+                history.push("/select")
+            })
     }
 
     function handleNewAtribute(e: SyntheticEvent) {
         e.preventDefault()
 
-        const data = {
+        let data = {
             name: newAtrName,
             value: newAtrValue,
-            maxvalue: Number(newAtrMaxValue)
+            maxvalue: Number(newAtrMaxValue),
         }
 
-        api.put(`/character/${characterId}/atributes`, data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': "*/*"
-            }
-        }).then(response => response.data?.result === 1 ?
-            setCharacter(response.data?.character) : alert("Não foi possível adicionar o novo atributo"))
-            .catch(err => {
-                console.error(err)
-                alert("Não foi possível adicionar o novo atributo")
-            })
-    }
-
-
-    function handleNewItem(e: SyntheticEvent) {
-        e.preventDefault()
-
-        const data = {
-            name: newItemName,
-            description: newItemDescription,
+        if (editAtrId) {
+            api.patch(`/character/${characterId}/atributes/${editAtrId}`, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': "*/*"
+                }
+            }).then(response => response.data?.result === 1 ?
+                setCharacter(response.data?.character) : alert("Não foi possível editar o atributo"))
+                .catch(err => {
+                    console.error(err)
+                    alert("Não foi possível editar o atributo")
+                })
+        } else {
+            api.post(`/character/${characterId}/atributes`, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': "*/*"
+                }
+            }).then(response => response.data?.result === 1 ?
+                setCharacter(response.data?.character) : alert("Não foi possível adicionar o novo atributo"))
+                .catch(err => {
+                    console.error(err)
+                    alert("Não foi possível adicionar o novo atributo")
+                })
         }
-
-        api.put(`character/${characterId}/inventory`, data)
-            .then(response => {
-                if (response.data?.result === 1) {
-                    setCharacter(response.data?.character)
-                } else {
-                    alert("Não foi possível adicionar o item")
-                }
-            })
-
-
-        setNewItemName("")
-        setNewItemDescription("")
-    }
-
-    function handleDeleteItem(itemId: string) {
-        api.delete(`character/${characterId}/inventory/${itemId}`)
-            .then(result => {
-                if (result.data?.result === 1) {
-                    setCharacter(result.data?.character as characterInterface)
-                    alert("Item deletado")
-                } else {
-                    alert("Não foi possível deleter item")
-                }
-            })
+        setNewAtrName("")
+        setNewAtrValue("")
+        setNewAtrMaxValue("")
+        setEditAtrId(undefined)
     }
 
     function handleDeleteAtribute(atrId: string) {
@@ -117,8 +106,92 @@ export default function CharacterDetails() {
             })
     }
 
+    function handleEditAtribute(id: string, name: string, value: string, maxvalue: number | undefined) {
+        setNewAtrName(name)
+        setNewAtrValue(value)
+        setNewAtrMaxValue(maxvalue ? maxvalue.toString() : "")
+        setEditAtrId(id)
+    }
+
+    function handleCancelEditingAtribute() {
+        setNewAtrName("")
+        setNewAtrValue("")
+        setNewAtrMaxValue("")
+        setEditAtrId(undefined)
+        return false
+    }
+
+    function handleNewItem(e: SyntheticEvent) {
+        e.preventDefault()
+
+        const data = {
+            name: newItemName,
+            description: newItemDescription,
+        }
+
+        if (editItemId) {
+            api.patch(`/character/${characterId}/inventory/${editItemId}`, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': "*/*"
+                }
+            }).then(response => response.data?.result === 1 ?
+                setCharacter(response.data?.character) : alert("Não foi possível editar o item"))
+                .catch(err => {
+                    console.error(err)
+                    alert("Não foi possível editar o item")
+                })
+            setEditItemId(undefined)
+        } else {
+            api.post(`/character/${characterId}/inventory`, data, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': "*/*"
+                }
+            }).then(response => response.data?.result === 1 ?
+                setCharacter(response.data?.character) : alert("Não foi possível adicionar o novo item"))
+                .catch(err => {
+                    console.error(err)
+                    alert("Não foi possível adicionar o novo item")
+                })
+        }
+
+        setNewItemName("")
+        setNewItemDescription("")
+        setEditItemId(undefined)
+    }
+
+    function handleDeleteItem(itemId: string) {
+        api.delete(`character/${characterId}/inventory/${itemId}`)
+            .then(result => {
+                if (result.data?.result === 1) {
+                    setCharacter(result.data?.character as characterInterface)
+                    alert("Item deletado")
+                } else {
+                    alert("Não foi possível deleter item")
+                }
+            })
+    }
+
+    function handleEditItem(id: string, name: string, description: string | undefined) {
+        setNewItemName(name)
+        setNewItemDescription(description ? description.toString() : "")
+        setEditItemId(id)
+    }
+
+    function handleCancelEditingItem() {
+        setNewItemName("")
+        setNewItemDescription("")
+        setEditItemId(undefined)
+    }
+
     function handleBackSelection() {
         history.push("/select")
+    }
+
+    function handleEditCharacterInfo() {
+        let description = character?.description.toString().replaceAll(" ", "+")
+        history.push(`/create?id=${characterId}&name=${character?.name}&description=${description}&avatar=${character?.avatar}`)
     }
 
     return (
@@ -127,8 +200,11 @@ export default function CharacterDetails() {
                 <FiArrowLeftCircle size={40} /> Selecionar outro personagem
             </button>
             <div className="character-info">
+                <button className="button-wrapper" onClick={handleEditCharacterInfo}>
+                    <img src={edit_icon} alt="Edit character" />
+                </button>
                 <div className="character-image">
-                    <img src={`${api.defaults.baseURL}/images/${character?.avatar_url}`} alt="character-img" className="character-img" />
+                    <img src={`${api.defaults.baseURL}/images/${character?.avatar}`} alt="character-img" className="character-img" />
                 </div>
                 <div className="name-wrapper">
                     Nome:<p className="name">{character?.name}</p>
@@ -152,11 +228,14 @@ export default function CharacterDetails() {
                         </thead>
                         <tbody>
                             {character?.atributes.map(
-                                atr => <Atribute
-                                    key={atr._id} id={atr._id}
+                                (atr, index) => <Atribute
+                                    key={index} id={atr._id}
                                     name={atr.name} value={atr.value}
                                     maxvalue={atr.maxvalue}
-                                    deleteCallback={handleDeleteAtribute} />
+                                    deleteCallback={handleDeleteAtribute}
+                                    editCallback={handleEditAtribute}
+                                    cancelEditingCallback={handleCancelEditingAtribute}
+                                />
                             )}
                         </tbody>
                     </table>
@@ -165,13 +244,10 @@ export default function CharacterDetails() {
                     <form action="">
                         <input type="text" placeholder="nome" id="input-atribute-name"
                             onChange={e => setNewAtrName(e.target.value)} value={newAtrName} />
-
                         <input type="text" placeholder="valor" id="input-atribute-value"
                             onChange={e => setNewAtrValue(e.target.value)} value={newAtrValue} />
-
                         <input type="number" placeholder="valor max" id="input-atribute-maxvalue"
                             onChange={e => setNewAtrMaxValue(e.target.value)} value={newAtrMaxValue} />
-
                         <button type="submit" onClick={e => handleNewAtribute(e)}>Adicionar</button>
                     </form>
                 </div>
@@ -180,8 +256,15 @@ export default function CharacterDetails() {
                 <h1>Inventário</h1>
                 <div className="item-list">
                     {character?.inventory.map(
-                        item => <Item key={item._id} id={item._id} name={item.name}
-                            description={item.description} deleteCallback={handleDeleteItem} />
+                        (item, index) => <Item
+                            key={index}
+                            id={item._id}
+                            name={item.name}
+                            description={item.description}
+                            deleteCallback={handleDeleteItem}
+                            editCallback={handleEditItem}
+                            cancelEditingCallback={handleCancelEditingItem}
+                        />
                     )}
                 </div>
                 <div className="add-item-wrapper">

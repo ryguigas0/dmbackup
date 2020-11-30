@@ -6,6 +6,14 @@
 
 .page-wrapper .character-info {
     grid-column: 1;
+    background-color: lightsteelblue;
+    height: min-content;
+}
+
+.page-wrapper .character-info .button-wrapper {
+    border: none;
+    width: min-content;
+    height: min-content;
 }
 
 .page-wrapper .character-atributes {

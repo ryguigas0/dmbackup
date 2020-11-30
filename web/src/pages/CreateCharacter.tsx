@@ -1,5 +1,5 @@
 import React, { ChangeEvent, FormEvent, useState } from "react"
-import { useHistory } from "react-router-dom"
+import { useHistory, useLocation } from "react-router-dom"
 
 import "../styles/pages/createCharacter.css"
 import default_usr from "../images/test_usr_img.jpg"
@@ -8,10 +8,18 @@ import api from "../api/api"
 
 export default function CreateCharacter() {
 
+    const search = useLocation().search
+    let id = new URLSearchParams(search).get('id')
+    let name = new URLSearchParams(search).get('name') as string
+    let description = new URLSearchParams(search).get('description') as string
+    let avatar = new URLSearchParams(search).get('avatar') as string
+    let avatar_url = `${api.defaults.baseURL}/images/${avatar}`
+
     const history = useHistory()
 
-    const [newCharacterName, setNewCharacterName] = useState<string>("")
-    const [newCharacterDescription, setNewCharacterDescription] = useState<string>("")
+    const editing = id ? true : false
+    const [newCharacterName, setNewCharacterName] = useState<string>(editing ? name : "")
+    const [newCharacterDescription, setNewCharacterDescription] = useState<string>(editing ? description : "")
     const [newCharacterAvatar, setNewCharacterAvatar] = useState<File>()
 
     function handleCharacterSubmit(e: FormEvent) {
@@ -19,20 +27,37 @@ export default function CreateCharacter() {
         let data = new FormData()
         data.append("name", newCharacterName)
         data.append("description", newCharacterDescription)
-        data.append("avatar", newCharacterAvatar ? newCharacterAvatar : "none")
-        api.post("/character", data, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
-            .then(response => {
-                let { result, id } = response.data
-                if (result === 1) {
-                    history.push(`/character/${id}`)
-                } else {
-                    alert("Não foi possível criar um novo personagem")
+        data.append("avatar", newCharacterAvatar || "none")
+
+        if (!editing) {
+            api.post("/character", data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
                 }
             })
+                .then(response => {
+                    let { result, id } = response.data
+                    if (result === 1) {
+                        history.push(`/character/${id}`)
+                    } else {
+                        alert("Não foi possível criar um novo personagem")
+                    }
+                })
+        } else {
+            api.patch(`character/${id}`, data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+                .then(response => {
+                    let { result, id } = response.data
+                    if (result === 1) {
+                        history.push(`/character/${id}`)
+                    } else {
+                        alert("Não foi editar o personagem")
+                    }
+                })
+        }
     }
 
     function handleNewCharacterAvatar(e: ChangeEvent<HTMLInputElement>) {
@@ -42,13 +67,14 @@ export default function CreateCharacter() {
         setNewCharacterAvatar(selectedImage)
     }
 
-
     return (
         <div className="createCharacter">
             <form className="create-character-form" action="">
                 <fieldset className="character-image">
                     <div className="character-image-preview">
-                        <img src={newCharacterAvatar ? URL.createObjectURL(newCharacterAvatar) : default_usr} alt="usr_default" className="character-img" />
+                        <img src={
+                            newCharacterAvatar ? URL.createObjectURL(newCharacterAvatar) : (avatar ? avatar_url : default_usr)
+                        } alt="character" className="character-img" />
                         <label htmlFor="avatar" className="edit-icon">
                             <img src={edit_icon} alt="" />
                         </label>
@@ -70,7 +96,7 @@ export default function CreateCharacter() {
                     </div>
                 </fieldset>
                 <button className="character-submit-button" onClick={handleCharacterSubmit}>
-                    Criar personagem
+                    {editing ? "Editar peronsagem" : "Criar personagem"}
                 </button>
             </form>
         </div>

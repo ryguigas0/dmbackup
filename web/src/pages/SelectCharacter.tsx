@@ -9,15 +9,17 @@ import CharacterThumbnail from "../components/CharacterThumbnail"
 interface characterInterface {
     _id: string,
     name: string,
-    avatar_url: string
+    avatar: string
 }
 
 export default function SelectCharacter() {
     const history = useHistory()
 
     const [characterList, setCharacterList] = useState<characterInterface[]>([])
+    const [requestedCharacters, setRequestedCharacters] = useState<Boolean>(false)
 
-    if (characterList === undefined || characterList.length === 0) {
+    if (!requestedCharacters) {
+        setRequestedCharacters(true)
         api.get("/characters")
             .then(result => setCharacterList((result.data as characterInterface[])))
             .catch(err => console.error(err))
@@ -49,7 +51,7 @@ export default function SelectCharacter() {
                 characterList.map((character, index) =>
                     <CharacterThumbnail
                         key={index} name={character.name}
-                        avatar_url={`${api.defaults.baseURL}/images/${character.avatar_url}`}
+                        avatar_url={`${api.defaults.baseURL}/images/${character.avatar}`}
                         id={character._id} onclickCallback={handleCharacterDetailsRedirect}
                         deleteButtonCallback={handleCharacterDelete}
                     />

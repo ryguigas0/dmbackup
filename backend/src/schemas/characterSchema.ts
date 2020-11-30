@@ -29,7 +29,7 @@ let characterSchema = new mongoose.Schema(
             },
             description: String
         }],
-        avatar_url: {
+        avatar: {
             type: String,
         }
     }
