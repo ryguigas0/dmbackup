@@ -44,22 +44,25 @@ export default function SelectCharacter() {
                 }
             })
     }
-
+    
     return (
         <div className="character-selection">
             {
                 characterList.map((character, index) =>
-                    <CharacterThumbnail
-                        key={index} name={character.name}
-                        avatar_url={`${api.defaults.baseURL}/images/${character.avatar}`}
-                        id={character._id} onclickCallback={handleCharacterDetailsRedirect}
-                        deleteButtonCallback={handleCharacterDelete}
-                    />
+                    {
+                        console.log(`${api.defaults.baseURL}/images/${character.avatar}`)
+                        return (<CharacterThumbnail
+                            key={index} name={character.name}
+                            avatar_url={`${api.defaults.baseURL}/images/${character.avatar}`}
+                            id={character._id} onclickCallback={handleCharacterDetailsRedirect}
+                            deleteButtonCallback={handleCharacterDelete}
+                        />)
+                    }
                 )
             }
-            <button className="character-thumb" onClick={handleCreateCharacterRedirect}>
+            <button className="add-character-thumb" onClick={handleCreateCharacterRedirect}>
                 <div className="add-icon-wrapper">
-                    <FiUserPlus size={100} className="add-icon" />
+                    <FiUserPlus size={100} fill="#000000" color="#ffffff" className="add-icon" />
                 </div>
                 <p>Criar um novo personagem</p>
             </button>
