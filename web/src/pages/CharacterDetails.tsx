@@ -1,12 +1,11 @@
 import React, { SyntheticEvent, useState } from "react"
 import { useHistory, useParams } from "react-router-dom"
-import { FiArrowLeftCircle } from "react-icons/fi"
+import { FiArrowLeftCircle, FiEdit } from "react-icons/fi"
 
 import Atribute from "../components/Atribute"
 import Item from "../components/Item"
 
 import "../styles/pages/characterDetails.css"
-import edit_icon from "../images/edit_icon.jpg"
 
 import api from "../api/api"
 
@@ -197,35 +196,28 @@ export default function CharacterDetails() {
     return (
         < div className="page-wrapper">
             <button className="back-button-wrapper" onClick={handleBackSelection}>
-                <FiArrowLeftCircle size={40} /> Selecionar outro personagem
+                <FiArrowLeftCircle size={40} /> <p>Selecionar outro personagem</p>
             </button>
             <div className="character-info">
-                <button className="button-wrapper" onClick={handleEditCharacterInfo}>
-                    <img src={edit_icon} alt="Edit character" />
+                <button className="edit-button-wrapper" onClick={handleEditCharacterInfo}>
+                    <FiEdit fill="#000000" color="#ffffff" size={40} /> <p>Editar informações</p>
                 </button>
                 <div className="character-image">
-                    <img src={`${api.defaults.baseURL}/images/${character?.avatar}`} alt="character-img" className="character-img" />
+                    <img src={`${api.defaults.baseURL}/images/${character?.avatar}`} alt="character-img" />
                 </div>
-                <div className="name-wrapper">
-                    Nome:<p className="name">{character?.name}</p>
-                </div>
-                <div className="description-wrapper">
-                    Descrição: <p className="description">
-                        {character?.description}
-                    </p>
+                <div className="about">
+                    <div className="name-display">
+                        <p>{character?.name}</p>
+                    </div>
+                    <div className="description-display">
+                        <p> {character?.description}</p>
+                    </div>
                 </div>
             </div>
             <div className="character-atributes">
                 <h1>Atributos</h1>
                 <div className="atributes-table-wrapper">
                     <table className="atributes-table">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Valor</th>
-                                <th>Valor máximo</th>
-                            </tr>
-                        </thead>
                         <tbody>
                             {character?.atributes.map(
                                 (atr, index) => <Atribute
@@ -267,8 +259,8 @@ export default function CharacterDetails() {
                         />
                     )}
                 </div>
-                <div className="add-item-wrapper">
-                    <form className="add-item-form" action="">
+                <div className="add-item">
+                    <form action="">
                         <input type="text" id="input-item-name" placeholder="nome"
                             onChange={e => setNewItemName(e.target.value)} value={newItemName} />
 
