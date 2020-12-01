@@ -1,8 +1,7 @@
 import React, { useState } from "react"
-import { FiTrash, FiX } from "react-icons/fi"
+import { FiEdit, FiTrash2, FiX } from "react-icons/fi"
 
 import "../styles/components/atribute.css"
-import edit_icon from "../images/edit_icon.jpg"
 
 interface AtributeProps {
     id: string,
@@ -24,11 +23,10 @@ export default function Atribute({ id, name, value, maxvalue, deleteCallback, ed
     return (
         <tr className="atribute">
             <td className="name">{name}</td>
-            <td className="value">{value}</td>
-            <td className="maxvalue">{maxvalue ? (maxvalue) : ("-")}</td>
+            <td className="value">{value} / {maxvalue ? (maxvalue) : ("-")}</td>
             <td className="delete-button-column">
                 <button onClick={() => deleteCallback(id)} className="button-wrapper">
-                    <FiTrash size={22} className="delete-button" />
+                    <FiTrash2 fill="#000000" color="#ffffff" size={40} />
                 </button>
                 <button onClick={() => {
                     editingButtonChange()
@@ -38,7 +36,7 @@ export default function Atribute({ id, name, value, maxvalue, deleteCallback, ed
                         setEditing(cancelEditingCallback())
                     }
                 }} className="button-wrapper">
-                    {editing ? (<FiX />) : (<img src={edit_icon} alt="edit" />)}
+                    {editing ? (<FiX />) : (<FiEdit fill="#000000" color="#ffffff" size={40} />)}
                 </button>
             </td>
         </tr>

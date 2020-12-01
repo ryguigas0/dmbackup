@@ -1,8 +1,13 @@
+.atribute {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 20px;
+    background-color: var(--atribute-bg);
+}
+
 .atribute td {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    padding-left: 15px;
-    background-color: gray;
+    font-size: x-large;
 }
 
 .button-wrapper {
@@ -14,7 +19,7 @@
     grid-template-columns: 2;
 }
 
-.delete-button {
+.delete-button-column .delete-button {
     background-color: cornsilk;
 }
 

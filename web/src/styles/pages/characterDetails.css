@@ -1,74 +1,89 @@
 .page-wrapper {
-    display: grid;
-    grid-template-columns: 20% 1fr 1fr;
-    column-gap: 30px;
-}
-
-.page-wrapper .character-info {
-    grid-column: 1;
-    background-color: lightsteelblue;
-    height: min-content;
-}
-
-.page-wrapper .character-info .button-wrapper {
-    border: none;
-    width: min-content;
-    height: min-content;
-}
-
-.page-wrapper .character-atributes {
-    grid-column: 2;
-}
-
-.page-wrapper .character-inventory {
-    grid-column: 3;
-    max-width: 310px;
-    min-height: 400px;
-}
-
-.page-wrapper .character-inventory .item-list {
-    overflow-y: scroll;
-    max-height: 270px;
-    min-height: 270px;
-}
-
-.page-wrapper .character-info .description-wrapper p.description {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
-
-.page-wrapper .character-atributes .atributes-table {
-    border-collapse: collapse;
-}
-
-.page-wrapper .character-atributes .atributes-table th {
-    padding-right: 40px;
-}
-
-.page-wrapper .character-atributes .atributes-table-wrapper {
-    max-height: 400px;
-    overflow-y: scroll;
-}
-
-.page-wrapper .character-atributes .add-atribute form input {
-    width: 80px;
-}
-
-.add-item-form {
     display: flex;
-    flex-direction: column;
-}
-
-.add-item-form #input-item-name, #input-item-description, button {
-    width: 200px;
 }
 
 .page-wrapper .back-button-wrapper {
-    border: none;
-    height: min-content;
-    width: min-content;
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
 }
 
-.page-wrapper .back-button-wrapper:hover {
-    background-color: lightsalmon;
+.page-wrapper .character-info {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    flex-wrap: wrap;
+    font-size: larger;
+}
+
+.page-wrapper .character-info .about {
+    background-color: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-wrapper .character-info .about .name-display {
+    font-size: x-large;
+}
+
+.page-wrapper .character-info .about .description-display {
+    font-size: x-large;
+    padding-left: 20px;
+    padding-right: 20px;
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+.page-wrapper .character-info .edit-button-wrapper {
+    display: flex;
+    flex-direction: row;
+    border: none;
+    background: none;
+    color: white;
+}
+
+.page-wrapper .character-info .character-image img {
+    border-radius: 100%;
+    width: 120px;
+    height: 120px;
+    padding-left: 10px;
+    padding-top: 10px;
+}
+
+.page-wrapper .character-atributes .atributes-table-wrapper {
+    max-height: 500px;
+    overflow: scroll;
+    padding-bottom: 20px;
+}
+
+.page-wrapper .character-atributes .add-atribute form {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+}
+
+.page-wrapper .character-atributes .add-atribute form input {
+    height: 40px;
+}
+
+.page-wrapper div div form button {
+    height: 30px;
+}
+
+.page-wrapper .character-inventory .item-list {
+    max-height: 300px;
+    overflow: scroll;
+    margin-bottom: 20px;
+}
+
+.page-wrapper .character-inventory .add-item form {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+}
+
+.page-wrapper .character-inventory .add-item form input {
+    height: 40px;
 }

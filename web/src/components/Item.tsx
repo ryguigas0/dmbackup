@@ -1,9 +1,8 @@
 import React, { useState } from "react"
 
-import { FiChevronDown, FiChevronUp, FiTrash, FiX } from 'react-icons/fi'
+import { FiChevronDown, FiChevronUp, FiEdit, FiTrash2, FiX } from 'react-icons/fi'
 
 import "../styles/components/item.css"
-import edit_icon from "../images/edit_icon.jpg"
 
 interface itemProps {
     id: string,
@@ -32,12 +31,12 @@ export default function Item({ id, name, description, deleteCallback, editCallba
                 {name}
                 <button onClick={buttonFlip} className="button-wrapper">
                     {
-                        expanded ? <FiChevronDown size={22} className="expand-button" /> :
-                            <FiChevronUp size={22} className="expand-button" />
+                        expanded ? <FiChevronDown size={40} fill="#0077B6" color="#ffffff" className="expand-button" /> :
+                            <FiChevronUp size={40} fill="#0077B6" color="#ffffff" className="expand-button" />
                     }
                 </button>
                 <button onClick={() => deleteCallback(id)} className="button-wrapper">
-                    <FiTrash size={22} className="delete-button" />
+                    <FiTrash2 fill="#000000" color="#ffffff" size={40} />
                 </button>
                 <button onClick={() => {
                     editingButtonChange()
@@ -47,7 +46,7 @@ export default function Item({ id, name, description, deleteCallback, editCallba
                         cancelEditingCallback()
                     }
                 }} className="button-wrapper">
-                    {editing ? <FiX /> : <img src={edit_icon} alt="edit" />}
+                    {editing ? <FiX /> : (<FiEdit fill="#000000" color="#ffffff" size={40} />)}
                 </button>
             </div>
             <div className="item-description-wrapper">

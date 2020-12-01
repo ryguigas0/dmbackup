@@ -1,9 +1,17 @@
+
 .character-selection {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    display: flex;
+    flex-direction: row-reverse;
+    padding-top: 10px;
+    padding-bottom: 10px;
     gap: 16px;
 }
 
-.add-icon{
+@media all and (max-width: 500px) {
+    .character-selection {
+        flex-direction: column-reverse;
+    }
+}
+.add-icon {
     margin-top: 5px;
 }

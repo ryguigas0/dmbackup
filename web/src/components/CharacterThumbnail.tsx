@@ -15,7 +15,7 @@ export default function CharacterThumbnail({ id, name, onclickCallback, deleteBu
     return (
         <div className="character-thumb-wrapper">
             <button className="delete-icon-wrapper" onClick={() => deleteButtonCallback(id)}>
-                <FiTrash size={22} className="image" />
+                <FiTrash size={50} fill="#000000" color="#ffffff" className="image" />
             </button>
             <div className="character-thumb" onClick={() => {
                 onclickCallback(id)
