@@ -1,7 +1,7 @@
 {
-  "name": "backend",
+  "name": "dmbackup-backend",
   "version": "1.0.0",
-  "description": "Backend aplication for the rpg character manager",
+  "description": "DMBackup backend aplication",
   "main": "server.js",
   "scripts": {
     "dev": "ts-node-dev --rs src/server.ts --ignore-watch node_modules",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ryguigas0/rpg-character-manager.git"
+    "url": "git+https://github.com/ryguigas0/dmbackup.git"
   },
   "author": "Guilherme Oliveira Casagrande",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ryguigas0/rpg-character-manager/issues"
+    "url": "https://github.com/ryguigas0/dmbackup/issues"
   },
-  "homepage": "https://github.com/ryguigas0/rpg-character-manager#readme",
+  "homepage": "https://github.com/ryguigas0/dmbackup#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -38,6 +38,6 @@
     "ts-node-dev": "^1.0.0"
   },
   "engines": {
-    "node": "12.19.0"
+    "node": "12.0.0"
   }
 }
