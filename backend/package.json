@@ -1,7 +1,7 @@
 {
   "name": "dmbackup-backend",
   "version": "1.0.0",
-  "description": "Backend aplication for the rpg character manager",
+  "description": "DMBackup backend aplication",
   "main": "server.js",
   "scripts": {
     "dev": "ts-node-dev --rs src/server.ts --ignore-watch node_modules",
