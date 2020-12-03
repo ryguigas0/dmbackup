@@ -15,8 +15,19 @@ export default {
             res.json(character)
         })
     },
-    addCharacter(req: Request, res: Response) {
+    async addCharacter(req: Request, res: Response) {
         let character = req.body
+        await CharacterDao.findOne({ name: character.name }, (err: any, result: characterInterface | null) => {
+            if (result) {
+                res.json({
+                    result: 0,
+                    id: result?._id,
+                    error: "Existe um personagem com o mesmo nome"
+                })
+                return
+            }
+            return
+        })
         character["avatar"] = req.file.filename
         CharacterDao.create(character)
             .then(result => res.json({
@@ -34,7 +45,7 @@ export default {
         let { id } = req.params
         let updatedCharacter: characterInterface = req.body
 
-        if (!updatedCharacter.avatar) {
+        if (updatedCharacter.avatar && req.file) {
             deleteUploadHelper(id)
             updatedCharacter.avatar = req.file.filename
         }
@@ -67,9 +78,9 @@ export default {
         let { name, value, maxvalue } = req.body
         await CharacterDao.updateOne({ _id: characterId, 'atributes._id': atrId }, {
             $set: {
-                'atributes.$.name': name ? name : "",
-                'atributes.$.value': value ? value : "",
-                'atributes.$.maxvalue': maxvalue ? maxvalue : undefined
+                'atributes.$.name': name || "",
+                'atributes.$.value': value || "",
+                'atributes.$.maxvalue': maxvalue || undefined
             }
         })
         CharacterDao.findById(characterId).then(result => res.json({
@@ -99,8 +110,8 @@ export default {
         let { name, description } = req.body
         await CharacterDao.updateOne({ _id: characterId, 'inventory._id': itemId }, {
             $set: {
-                'inventory.$.name': name ? name : "",
-                'inventory.$.description': description ? description : ""
+                'inventory.$.name': name || "",
+                'inventory.$.description': description || ""
             }
         })
         CharacterDao.findById(characterId).then(result => res.json({
