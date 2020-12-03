@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 export default interface characterInterface extends mongoose.Document {
+    _id: string,
     name: string,
     description: string,
     atributes: Array<{
