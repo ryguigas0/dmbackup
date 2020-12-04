@@ -8,9 +8,6 @@ export default function (id: string) {
         if (filename) {
             fs.unlink(path.resolve("uploads", filename), err => {
                 if (err) console.log(err)
-                else {
-                    console.log("File was deleted!")
-                }
             })
         }
     }).catch(err => console.error(err))
