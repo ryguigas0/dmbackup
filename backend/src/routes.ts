@@ -18,17 +18,15 @@ export default {
     async addCharacter(req: Request, res: Response) {
         let character = req.body
         await CharacterDao.findOne({ name: character.name }, (err: any, result: characterInterface | null) => {
-            if (result) {
-                res.json({
+            if (!err) {
+                return res.json({
                     result: 0,
                     id: result?._id,
                     error: "Existe um personagem com o mesmo nome"
                 })
-                return
             }
-            return
         })
-        character["avatar"] = req.file.filename
+        character["avatar"] = req.file ? req.file.filename : "none"
         CharacterDao.create(character)
             .then(result => res.json({
                 result: 1,
