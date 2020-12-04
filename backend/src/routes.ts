@@ -19,21 +19,21 @@ export default {
         let character = req.body
         await CharacterDao.findOne({ name: character.name }, (err: any, result: characterInterface | null) => {
             if (result) {
-                res.json({
+                return res.json({
                     result: 0,
                     id: result?._id,
                     error: "Existe um personagem com o mesmo nome"
                 })
+            } else {
+                character["avatar"] = req.file ? req.file.filename : "none"
+                CharacterDao.create(character)
+                    .then(result => res.json({
+                        result: 1,
+                        id: result._id
+                    }))
                 return
             }
-            return
         })
-        character["avatar"] = req.file.filename
-        CharacterDao.create(character)
-            .then(result => res.json({
-                result: 1,
-                id: result._id
-            }))
     },
     deleteCharacter(req: Request, res: Response) {
         let { id } = req.params
@@ -45,7 +45,7 @@ export default {
         let { id } = req.params
         let updatedCharacter: characterInterface = req.body
 
-        if (updatedCharacter.avatar && req.file) {
+        if (req.file) {
             deleteUploadHelper(id)
             updatedCharacter.avatar = req.file.filename
         }

@@ -6,6 +6,7 @@ import Atribute from "../components/Atribute"
 import Item from "../components/Item"
 
 import "../styles/pages/characterDetails.css"
+import default_usr from "../images/default_usr_img.jpg"
 
 import api from "../api/api"
 
@@ -203,7 +204,7 @@ export default function CharacterDetails() {
                     <FiEdit fill="#000000" color="#ffffff" size={40} /> <p>Editar informações</p>
                 </button>
                 <div className="character-image">
-                    <img src={`${api.defaults.baseURL}/images/${character?.avatar}`} alt="character-img" />
+                    <img src={character?.avatar === "none" ? default_usr : `${api.defaults.baseURL}/images/${character?.avatar}`} alt="character-img" />
                 </div>
                 <div className="about">
                     <div className="name-display">

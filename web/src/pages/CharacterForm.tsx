@@ -3,7 +3,7 @@ import { useHistory, useLocation } from "react-router-dom"
 import { FiFilePlus } from "react-icons/fi"
 
 import "../styles/pages/characterForm.css"
-import default_usr from "../images/test_usr_img.jpg"
+import default_usr from "../images/default_usr_img.jpg"
 import api from "../api/api"
 
 export default function CharacterForm() {
@@ -12,11 +12,10 @@ export default function CharacterForm() {
     let id = new URLSearchParams(search).get('id')
     let name = new URLSearchParams(search).get('name') as string
     let description = new URLSearchParams(search).get('description') as string
-    let avatar = new URLSearchParams(search).get('avatar') as string
+    let avatar = new URLSearchParams(search).get('avatar') as string || "none"
     let avatar_url = `${api.defaults.baseURL}/images/${avatar}`
 
     const history = useHistory()
-
     const editing = id ? true : false
     const [newCharacterName, setNewCharacterName] = useState<string>(editing ? name : "")
     const [newCharacterDescription, setNewCharacterDescription] = useState<string>(editing ? description : "")
@@ -24,33 +23,36 @@ export default function CharacterForm() {
 
     function handleCharacterSubmit(e: FormEvent) {
         e.preventDefault()
-        if (!newCharacterAvatar || !newCharacterDescription || !newCharacterAvatar) {
+        if ((!newCharacterDescription || !newCharacterName) && !editing) {
             alert("Por favor coloque no mínimo um nome e uma descrição!")
             return
         }
         let data = new FormData()
         data.append("name", newCharacterName)
         data.append("description", newCharacterDescription)
-        data.append("avatar", newCharacterAvatar || "none")
+        data.append("avatar", newCharacterAvatar || (editing ? avatar : "none"))
 
         if (!editing) {
             api.post("/character", data, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
+                    "Access-Control-Allow-Origin": "*"
                 }
             })
                 .then(response => {
-                    let { result, id } = response.data
+                    let { result, id, error } = response.data
+                    console.log(response.data)
                     if (result === 1) {
                         history.push(`/character/${id}`)
                     } else {
-                        alert("Não foi possível criar um novo personagem")
+                        alert(error || "Não foi possível criar um novo personagem")
                     }
                 })
         } else {
             api.patch(`character/${id}`, data, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
+                    "Access-Control-Allow-Origin": "*"
                 }
             })
                 .then(response => {
@@ -77,7 +79,7 @@ export default function CharacterForm() {
                 <fieldset className="character-image">
                     <div className="character-image-preview">
                         <img src={
-                            newCharacterAvatar ? URL.createObjectURL(newCharacterAvatar) : (avatar ? avatar_url : default_usr)
+                            newCharacterAvatar ? URL.createObjectURL(newCharacterAvatar) : (avatar === "none" ? default_usr : avatar_url)
                         } alt="character" className="character-img" />
                         <label htmlFor="avatar" className="edit-icon">
                             <FiFilePlus fill="#000000" size={40} />

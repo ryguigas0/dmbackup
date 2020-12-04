@@ -44,20 +44,17 @@ export default function SelectCharacter() {
                 }
             })
     }
-    
+
     return (
         <div className="character-selection">
             {
                 characterList.map((character, index) =>
-                    {
-                        console.log(`${api.defaults.baseURL}/images/${character.avatar}`)
-                        return (<CharacterThumbnail
-                            key={index} name={character.name}
-                            avatar_url={`${api.defaults.baseURL}/images/${character.avatar}`}
-                            id={character._id} onclickCallback={handleCharacterDetailsRedirect}
-                            deleteButtonCallback={handleCharacterDelete}
-                        />)
-                    }
+                    <CharacterThumbnail
+                        key={index} name={character.name}
+                        avatar={character.avatar}
+                        id={character._id} onclickCallback={handleCharacterDetailsRedirect}
+                        deleteButtonCallback={handleCharacterDelete}
+                    />
                 )
             }
             <button className="add-character-thumb" onClick={handleCreateCharacterRedirect}>
